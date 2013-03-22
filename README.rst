@@ -1,13 +1,8 @@
 Redditology
 ===========
 
-A reddit analytics site.
-
-
-Introduction
-------------
+*A reddit analytics site.*
 
 It's simple really.
 
-I wanted to ask and answer one simple question, 'How many of the top Reddit posts every day are about cats?'
-
+I wanted to ask and answer one simple question, *'How many of the top Reddit posts every day are about cats?'*
