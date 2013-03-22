@@ -1,0 +1,26 @@
+body
+{
+	font-size: 13px;
+	/*padding-top: 40px;*/
+}
+
+.navbar .brand
+{
+	font-weight: bold;
+	color: rgb(0,0,0);
+	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 0px 30px rgba(255, 255, 255, 0.125);
+	transition: all 0.2s linear 0s;
+}
+
+.page-header
+{
+	background: linear-gradient(45deg, rgb(252, 255, 206) 0%, rgb(146, 204, 172) 100%) repeat scroll 0% 0% transparent;
+	/*Alternative header*/
+	/*background: linear-gradient(45deg, rgb(206, 252, 255) 0%, rgb(204, 172, 146) 100%);*/
+	/*box-shadow: 0px 0px 23px 3px;*/
+	text-align: center;
+	/*height: 100px;*/
+	/*padding-top: 40px;*/
+	height: 140px;
+	padding-top: 80px;
+}

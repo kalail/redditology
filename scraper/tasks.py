@@ -1,12 +1,14 @@
 import requests
-import datetime
+import scraper.settings as settings
 from django.core.cache import cache
 from redditology.models import Post, Snapshot, PostSnapshot, Author, Subreddit, Domain
 from requests.exceptions import RequestException
 from celery.task import task, periodic_task
 from datetime import timedelta
 from celery.utils.log import get_task_logger
-from django.utils.timezone import utc
+from scraper.helpers import PostParser
+from scraper.models import Scrape
+
 
 logger = get_task_logger(__name__)
 
@@ -15,37 +17,45 @@ headers = {
 	'User-Agent': 'redditology_post_fetcher'
 }
 
-fetch_period = 10
 
-@periodic_task(run_every = timedelta(seconds=fetch_period))
+@periodic_task(run_every = timedelta(seconds=settings.SCRAPE_FREQUENCY))
 def fetch_posts():
 	"""Fetch Posts
 
 	Get the current top 100 posts on the reddit homepage. Saves the listing of raw un-parsed posts into the cache.
 	"""
 
+	scrape = Scrape()
 	try:
 		# Make request
 		data = requests.get(url=url, headers=headers)
 	except RequestException:
 		# Catch timeout
+		scrape.successful = False
+		scrape.save()
 		logger.error('Request timed out')
 		return
 
 	# Check for data existence
 	if not data.json:
+		scrape.successful = False
+		scrape.save()
 		logger.error('No data recieved')
 		return
 
 	# Check for correct data type
 	if not data.json['kind'] == 'Listing':
+		scrape.successful = False
+		scrape.save()
 		logger.error('Wrong data type recieved')
 		return
 
 	logger.info('Fetched current listing')
+	scrape.succesful = True
+	scrape.save()
 
 	# Create snapshot
-	s = Snapshot()
+	s = Snapshot(scrape=scrape, created_on=scrape.created_on)
 	s.save()
 
 	# Contruct packet
@@ -163,63 +173,3 @@ def process_post(parsed_post_cache_key, snapshot_id):
 		num_comments = parsed_post.num_comments
 	)
 	post_snapshot.save()
-
-
-
-class PostParser(object):
-
-	def __init__(self, raw_post, rank):
-		self.post = raw_post['data']
-		self.rank = rank
-
-	@property
-	def title(self):
-		return self.post['title']
-
-	@property
-	def created_on(self):
-		return datetime.datetime.utcfromtimestamp(self.post['created_utc']).replace(tzinfo=utc)
-
-	@property
-	def author(self):
-		return self.post['author']
-
-	@property
-	def over_18(self):
-		return self.post['over_18']
-
-	@property
-	def id(self):
-		return self.post['id']
-
-	@property
-	def num_comments(self):
-		return self.post['num_comments']
-
-	@property
-	def score(self):
-		return self.post['score']
-
-	@property
-	def up_votes(self):
-		return self.post['ups']
-
-	@property
-	def down_votes(self):
-		return self.post['downs']
-
-	@property
-	def domain(self):
-		return self.post['domain']
-	
-	@property
-	def url(self):
-		return self.post['url']
-
-	@property
-	def edited(self):
-		return self.post['edited']
-
-	@property
-	def subreddit(self):
-		return self.post['subreddit']

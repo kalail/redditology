@@ -1,5 +1,5 @@
 from django.db import models
-
+from redditology.apps.scraper.models import Scrape
 
 class Author(models.Model):
 	name = models.TextField()
@@ -8,7 +8,8 @@ class Author(models.Model):
 		return self.name
 
 class Snapshot(models.Model):
-	created_on = models.DateTimeField(auto_now_add=True)
+	created_on = models.DateTimeField()
+	scrape = models.OneToOneField(Scrape, blank=True, null=True)
 
 	def __unicode__(self):
 		return 'Snapshot - ' + str(self.created_on)

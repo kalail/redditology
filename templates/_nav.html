@@ -1,0 +1,14 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="{% url redditology.views.index %}">Redditology</a>
+			<ul class="nav">
+				<li {% if active == 'about' %} class="active" {% endif %}><a href="#">About</a></li>
+				<li {% if active == 'contact' %} class="active" {% endif %}><a href="#">Contact</a></li>
+			</ul>
+			<ul class="nav pull-right">
+				<li {% if active == 'scraper' %} class="active" {% endif %}><a href="{% url redditology.apps.scraper.views.index %}">Scraping since New Year's 2013</a></li>
+			</ul>
+		</div>
+	</div>
+</div>

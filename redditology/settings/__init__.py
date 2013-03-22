@@ -1,6 +1,5 @@
 # Django settings for redditology project.
 import os
-import django
 
 # Set up site root constant
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__) + '/../../')
@@ -14,13 +13,13 @@ try:
 	app_env = os.environ["REDDITOLOGY_ENV"]
 	if app_env == "production":
 		# Import production settings
-		from redditology.env_settings.production_settings import *
+		from redditology.settings.production import *
 	elif app_env == "development":
 		# Import development settings
-		from redditology.env_settings.development_settings import *
+		from redditology.settings.development import *
 except KeyError, e:
 	# import local settings
-	from redditology.env_settings.local_settings import *
+	from redditology.settings.local import *
 
 # Set various variables.
 TIME_ZONE = 'America/Chicago'
@@ -89,9 +88,10 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'django.contrib.admin',
 	'django.contrib.admindocs',
-	'redditology',
 	'south',
 	'djcelery',
+
+	'scraper',
 )
 
 # Set up simple master logger
