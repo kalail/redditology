@@ -1,4 +1,4 @@
-web: python manage.py runserver
-worker: python manage.py celery worker -E --loglevel=INFO
-scheduler: python manage.py celery beat
-monitor: python manage.py celery flower --broker=redis://localhost:6379/0
+web: python redditology/manage.py run_gunicorn --workers=9 --bind=0.0.0.0:80
+worker: python redditology/manage.py celery worker -E --loglevel=INFO
+scheduler: python redditology/manage.py celery beat
+monitor: python redditology/manage.py celery flower
