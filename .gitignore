@@ -2,6 +2,6 @@
 *.pot
 *.pyc
 .ropeproject
-local_settings.py
+local.py
 config.env
 _build
