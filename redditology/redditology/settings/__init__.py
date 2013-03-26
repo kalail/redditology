@@ -73,10 +73,18 @@ LOGGING = {
 			'class': 'logging.StreamHandler',
 			'formatter': 'simple'
 		},
-		'file': {
+		'info': {
             'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'master.log',
+            'filename': 'logs/info.log',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 3,
+            'formatter':'verbose',
+        },  
+		'master': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/master.log',
             'maxBytes': 1024*1024*5, # 5 MB
             'backupCount': 3,
             'formatter':'verbose',
@@ -84,8 +92,8 @@ LOGGING = {
 	},
 	'loggers': {
 		'': {
-			'handlers': ['console', 'file'],
-			'level': 'INFO',
+			'handlers': ['console', 'info', 'master'],
+			'level': 'DEBUG',
 			'propagate': True,
 		},
 	}
