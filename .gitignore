@@ -2,7 +2,9 @@
 *.pot
 *.pyc
 *.db
+*.pid
 .ropeproject
+.env
 local.py
-config.env
+celerybeat-schedule
 _build
