@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.psycopg2',
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
 		'NAME': os.environ.get('REDDITOLOGY_DB_NAME'),
 		'USER': os.environ.get('REDDITOLOGY_DB_USER'),
 		'PASSWORD': os.environ.get('REDDITOLOGY_DB_PASSWORD'),
@@ -15,8 +15,8 @@ DATABASES = {
 }
 
 # Amazon S3 setting
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = os.environ.get("REDDITOLOGY_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("REDDITOLOGY_AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = 'redditology'
 
 # DEFAULT_FILE_STORAGE = 'helpers.storages.MediaS3Storage'
@@ -59,4 +59,4 @@ INSTALLED_APPS = (
 	'posts',
 )
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('REDDITOLOGY_SECRET_KEY')
