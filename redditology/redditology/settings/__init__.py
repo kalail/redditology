@@ -54,6 +54,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # Celery settings
 import djcelery
 djcelery.setup_loader()
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 # Set up simple master logger
 LOGGING = {
@@ -73,26 +74,26 @@ LOGGING = {
 			'class': 'logging.StreamHandler',
 			'formatter': 'simple'
 		},
-		'info': {
+		'easy': {
             'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'info.log',
-            'maxBytes': 1024*1024*5, # 5 MB
+            'filename': 'logs/info.log',
+            'maxBytes': 1024*1024*5,
             'backupCount': 3,
             'formatter':'verbose',
         },  
 		'master': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'master.log',
-            'maxBytes': 1024*1024*5, # 5 MB
+            'filename': 'logs/master.log',
+            'maxBytes': 1024*1024*10,
             'backupCount': 3,
             'formatter':'verbose',
         },  
 	},
 	'loggers': {
-		'': {
-			'handlers': ['console', 'info', 'master'],
+		'django': {
+			'handlers': ['master', 'easy', 'console'],
 			'level': 'DEBUG',
 			'propagate': True,
 		},
