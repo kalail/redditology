@@ -76,7 +76,7 @@ LOGGING = {
 		'info': {
             'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/info.log',
+            'filename': 'info.log',
             'maxBytes': 1024*1024*5, # 5 MB
             'backupCount': 3,
             'formatter':'verbose',
@@ -84,7 +84,7 @@ LOGGING = {
 		'master': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/master.log',
+            'filename': 'master.log',
             'maxBytes': 1024*1024*5, # 5 MB
             'backupCount': 3,
             'formatter':'verbose',
