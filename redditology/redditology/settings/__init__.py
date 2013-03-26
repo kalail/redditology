@@ -91,7 +91,8 @@ INSTALLED_APPS = (
 	'south',
 	'djcelery',
 
-	'scraper',
+	'fetcher',
+	'posts',
 )
 
 # Set up simple master logger
