@@ -1,4 +1,4 @@
-from fabric import run, env, local
+from fabric.api import *
 
 # Import settings
 env.hosts = [
@@ -22,12 +22,12 @@ def deploy():
 
 	run('workon redditology')
 	run('cdvirtualenv')
-	run('cd redditology')
-	run('git pull master')
-	run('python redditology/manage.py syncdb')
-	run('python redditology/manage.py migrate')
-	run('python redditology/manage.py collectstatic')
-	run('foreman start & disown')
+	with cd(redditology):
+		run('git pull master')
+		run('python redditology/manage.py syncdb')
+		run('python redditology/manage.py migrate')
+		run('python redditology/manage.py collectstatic')
+		run('foreman start & disown')
 
 
 def compile_coffee():
