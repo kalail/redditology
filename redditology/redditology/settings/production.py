@@ -1,50 +1,62 @@
-DEBUG = True
+import os
+
+# Debug
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-		'NAME': 'redditology_db',                      # Or path to database file if using sqlite3.
-		'USER': 'redditology_user',                      # Not used with sqlite3.
-		'PASSWORD': 'redditology_password',                  # Not used with sqlite3.
-		'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-		'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+		'ENGINE': 'django.db.backends.psycopg2',
+		'NAME': os.environ.get('REDDITOLOGY_DB_NAME'),
+		'USER': os.environ.get('REDDITOLOGY_DB_USER'),
+		'PASSWORD': os.environ.get('REDDITOLOGY_DB_PASSWORD'),
+		'HOST': os.environ.get('REDDITOLOGY_DB_HOST'),
 	}
 }
 
-# URL prefix for static files.
-STATIC_URL = '/static/'
+# Amazon S3 setting
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = 'redditology'
 
-# Unique key for Django.
-SECRET_KEY = 'xa9z4xzf3ejaqy$4yurs4b+r@#gkh10#tl@09$@u&amp;!%+v=g6(3'
+# DEFAULT_FILE_STORAGE = 'helpers.storages.MediaS3Storage'
+# STATICFILES_STORAGE = 'helpers.storages.StaticS3Storage'
 
-# Redis settings
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# URL prefix for files.
+STATIC_URL = 'https://s3.amazonaws.com/' + AWS_STORAGE_BUCKET_NAME + '/static/'
+MEDIA_URL = 'https://s3.amazonaws.com/' + AWS_STORAGE_BUCKET_NAME + '/media/'
 
+# RabbitMQ
+BROKER_URL = os.environ.get('REDDITOLOGY_ZEROMQ_LOCATION')
 
-# Set up Cache
 CACHES = {
-	'default': {
-		'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-		'LOCATION': '127.0.0.1:11211'
-	}
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': os.environ.get('REDDITOLOGY_MEMCACHED_LOCATION'),
+    }
 }
-
 
 INSTALLED_APPS = (
+	# Contrib
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 	'django.contrib.sites',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	# Django Suits needds to be added before admin
 	'suit',
 	'django.contrib.admin',
 	'django.contrib.admindocs',
+	# Third party
 	'south',
 	'djcelery',
-
+	'django_extensions',
+	'storages',
+	'gunicorn',
+	# App
 	'fetcher',
 	'posts',
 )
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
