@@ -1,4 +1,4 @@
-from scraper.models import Scrape
+from .models import Fetch
 from django.contrib import admin
 
-admin.site.register(Scrape)
+admin.site.register(Fetch)

@@ -6,7 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
 
-	url(r'^scraper/', include('redditology.apps.scraper.urls')),
+	# url(r'^scraper/', include('redditology.apps.scraper.urls')),
 
-	url(r'^$', 'redditology.views.index'),
+	# url(r'^$', 'redditology.views.index'),
 )

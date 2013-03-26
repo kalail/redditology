@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, url
 
-urlpatterns = patterns('scraper.views',
-	url(r'^$', 'index'),
+urlpatterns = patterns('fetcher.views',
+	# url(r'^$', 'index'),
 	)
