@@ -30,3 +30,21 @@ CACHES = {
 		'LOCATION': '127.0.0.1:11211'
 	}
 }
+
+
+INSTALLED_APPS = (
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.sites',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'suit',
+	'django.contrib.admin',
+	'django.contrib.admindocs',
+	'south',
+	'djcelery',
+
+	'fetcher',
+	'posts',
+)

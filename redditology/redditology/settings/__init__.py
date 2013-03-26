@@ -1,25 +1,8 @@
-# Django settings for redditology project.
 import os
 
-# Set up site root constant
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__) + '/../../')
-
-# Method to return absolute paths from relative paths
-def absolute_path(relative_root_path, target_file):
-	return os.path.join(relative_root_path, target_file)
-
-# Import corresponding environment settings.
-try:
-	app_env = os.environ["REDDITOLOGY_ENV"]
-	if app_env == "production":
-		# Import production settings
-		from redditology.settings.production import *
-	elif app_env == "development":
-		# Import development settings
-		from redditology.settings.development import *
-except KeyError, e:
-	# import local settings
-	from redditology.settings.local import *
+# Relative path settings
+from unipath import Path
+PROJECT_ROOT = Path(__file__).ancestor(3)
 
 # Set various variables.
 TIME_ZONE = 'America/Chicago'
@@ -31,17 +14,14 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
-
-# URL that handles the media served from MEDIA_ROOT - trailing slash.
-MEDIA_URL = '/media/'
+MEDIA_ROOT = PROJECT_ROOT.child('media')
 
 # Absolute path to the directory static files should be collected to using collectstatic.
 STATIC_ROOT = ''
 
 # Additional locations of static files - absolute paths
 STATICFILES_DIRS = (
-	absolute_path(SITE_ROOT, 'static'),
+	PROJECT_ROOT.child('static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -49,14 +29,13 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
 	'django.contrib.staticfiles.finders.FileSystemFinder',
 	'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+	'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
 	'django.template.loaders.filesystem.Loader',
-	'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+	'django.template.loaders.app_directories.Loader'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,8 +44,8 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
-	# Uncomment the next line for simple clickjacking protection:
-	# 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'redditology.urls'
@@ -76,25 +55,15 @@ WSGI_APPLICATION = 'redditology.wsgi.application'
 
 # Templates location - absolute path
 TEMPLATE_DIRS = (
-	absolute_path(SITE_ROOT, 'templates'),
+	PROJECT_ROOT.child('templates'),
 )
 
-INSTALLED_APPS = (
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.sites',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
-	'suit',
-	'django.contrib.admin',
-	'django.contrib.admindocs',
-	'south',
-	'djcelery',
+# Set up Sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
-	'fetcher',
-	'posts',
-)
+# Celery settings
+import djcelery
+djcelery.setup_loader()
 
 # Set up simple master logger
 LOGGING = {
@@ -114,27 +83,48 @@ LOGGING = {
 			'class': 'logging.StreamHandler',
 			'formatter': 'simple'
 		},
+		'file': {
+            'level':'INFO',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'master.log',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 3,
+            'formatter':'verbose',
+        },  
 	},
 	'loggers': {
 		'': {
-			'handlers': ['console'],
+			'handlers': ['console', 'file'],
 			'level': 'INFO',
 			'propagate': True,
 		},
 	}
 }
 
-# Celery settings
-import djcelery
-djcelery.setup_loader()
-
-
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-    'django.core.context_processors.request',
+TEMPLATE_CONTEXT_PROCESSORS = (
+	"django.contrib.auth.context_processors.auth",
+	"django.core.context_processors.debug",
+	"django.core.context_processors.i18n",
+	"django.core.context_processors.media",
+	"django.core.context_processors.static",
+	"django.core.context_processors.tz",
+	"django.contrib.messages.context_processors.messages",
+	'django.core.context_processors.request',
 )
 
 SUIT_CONFIG = {
     'ADMIN_NAME': 'Redditology'
 }
+
+# Import corresponding environment settings.
+try:
+	app_env = os.environ["REDDITOLOGY_ENV"]
+	if app_env == "production":
+		# Import production settings
+		from .production import *
+	elif app_env == "development":
+		# Import development settings
+		from .development import *
+except KeyError, e:
+	# import local settings
+	from .local import *
