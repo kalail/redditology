@@ -1,130 +1,33 @@
-from fabric.api import *
+from fabric import run, env, local
 
 # Import settings
-from django.conf import settings
-
-cmd_envs = {
-	'development': (
-		'd',
-		'dev',
-		'development',
-	),
-
-	'production': (
-		'production',
-	),
-}
+env.hosts = [
+	'96.126.122.107',
+]
 
 
-def push(environment=None):
-	"""Pull the app to from Linode."""
+def full_clean():
+	"""Clean the current local environment"""
 
-	if not environment:
-		print "No environment declared!"
-		return
-	# Push to heroku
-	if environment in cmd_envs['development']:
-		cmd_env = 'heroku'
-	elif environment in cmd_envs['production']:
-		cmd_env = 'heroku-production'
-	else:
-		print "Incorrect environment declared!"
-		return
+	# Remove logs
+	local('rm ../logs/master.log')
+	local('rm ../logs/info.log')
+	# Remove database
+	local('rm redditology.db')
+	# Delete celery files
+	local('rm ../celerybeat-schedule')
 
-	local('git push %s' % cmd_env)
-
-def add_config_vars(environment=None):
-	"""Add given config variables as environment variables."""
-
-	if not environment:
-		print "No environment declared!"
-		return
-
-	if environment in cmd_envs['development']:
-		cmd_env = 'hypestarter-dev'
-		config_vars = settings.CONFIG_VARS['DEVELOPMENT']
-	elif environment in cmd_envs['production']:
-		cmd_env = 'hypestarter'
-		config_vars = settings.CONFIG_VARS['PRODUCTION']
-	else:
-		print "Incorrect environment declared!"
-		return
-
-	config_commands = ['%s="%s"' % (name, var) for name, var in config_vars.items()]
-	config_command = ' '.join(config_commands)
-	local('heroku config:add %s --app %s' % (config_command, cmd_env))
-
-
-def syncdb(environment=None):
-	"""Run syncdb on the server."""
-
-	if not environment:
-		print "No environment declared!"
-		return
-
-	if environment in cmd_envs['development']:
-		cmd_env = 'hypestarter-dev'
-	elif environment in cmd_envs['production']:
-		cmd_env = 'hypestarter'
-	else:
-		print "Incorrect environment declared!"
-		return
-
-	local('heroku run python hypestarter/manage.py syncdb --app %s' % cmd_env)
-
-def migrate(environment=None):
-	"""Migrate the database on the server."""
-	if not environment:
-		print "No environment declared!"
-		return
-
-	if environment in cmd_envs['development']:
-		cmd_env = 'hypestarter-dev'
-	elif environment in cmd_envs['production']:
-		cmd_env = 'hypestarter'
-	else:
-		print "Incorrect environment declared!"
-		return
-
-	local('heroku run python hypestarter/manage.py migrate --app %s' % cmd_env)
-
-def collectstatic(environment=None):
-	"""Push all static assets to S3."""
-	if not environment:
-		print "No environment declared!"
-		return
-
-	if environment in cmd_envs['development']:
-		cmd_env = 'hypestarter-dev'
-	elif environment in cmd_envs['production']:
-		cmd_env = 'hypestarter'
-	else:
-		print "Incorrect environment declared!"
-		return
-
-	local('heroku run python hypestarter/manage.py collectstatic --app %s' % cmd_env)
-
-
-def deploy(environment=None):
+def deploy():
 	"""Fully deploy the app to heroku, running all the steps."""
 
-	if not environment:
-		print "No environment declared!"
-		return
-
-	if environment in cmd_envs['development']:
-		env_name = 'development'
-	elif environment in cmd_envs['production']:
-		env_name = 'production'
-	else:
-		print "Incorrect environment declared!"
-		return
-
-	push(env_name)
-	add_config_vars(env_name)
-	syncdb(env_name)
-	migrate(env_name)
-	collectstatic(env_name)
+	run('workon redditology')
+	run('cdvirtualenv')
+	run('cd redditology')
+	run('git pull master')
+	run('python redditology/manage.py syncdb')
+	run('python redditology/manage.py migrate')
+	run('python redditology/manage.py collectstatic')
+	run('foreman start & disown')
 
 
 def compile_coffee():
