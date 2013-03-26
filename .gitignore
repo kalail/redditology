@@ -3,4 +3,5 @@
 *.pyc
 .ropeproject
 local_settings.py
+config.env
 _build
