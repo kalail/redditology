@@ -19,8 +19,8 @@ AWS_ACCESS_KEY_ID = os.environ.get("REDDITOLOGY_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("REDDITOLOGY_AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = 'redditology'
 
-# DEFAULT_FILE_STORAGE = 'helpers.storages.MediaS3Storage'
-# STATICFILES_STORAGE = 'helpers.storages.StaticS3Storage'
+DEFAULT_FILE_STORAGE = 'helpers.storages.MediaS3Storage'
+STATICFILES_STORAGE = 'helpers.storages.StaticS3Storage'
 
 # URL prefix for files.
 STATIC_URL = 'https://s3.amazonaws.com/' + AWS_STORAGE_BUCKET_NAME + '/static/'

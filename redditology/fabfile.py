@@ -18,16 +18,16 @@ def full_clean():
 	local('rm ../celerybeat-schedule')
 
 def deploy():
-	"""Fully deploy the app to heroku, running all the steps."""
-
-	run('workon redditology')
-	run('cdvirtualenv')
-	with cd(redditology):
-		run('git pull master')
-		run('python redditology/manage.py syncdb')
-		run('python redditology/manage.py migrate')
-		run('python redditology/manage.py collectstatic')
-		run('foreman start & disown')
+	"""Fully deploy the app to linode, running all the steps."""
+	with settings(warn_only=True):
+		run('workon redditology')
+		run('cdvirtualenv')
+		with cd('redditology'):
+			run('git pull master')
+			run('python redditology/manage.py syncdb')
+			run('python redditology/manage.py migrate')
+			run('python redditology/manage.py collectstatic')
+			# run('foreman start & disown')
 
 
 def compile_coffee():
