@@ -1,6 +1,7 @@
 *.log
 *.pot
 *.pyc
+*.db
 .ropeproject
 local.py
 config.env
